@@ -1,0 +1,27 @@
+{
+    // コンテナ環境の名前（Codespaces UIに表示されます）
+    "name": "Python 3 & Streamlit",
+  
+    // ベースとなるDockerイメージを指定します。Microsoft提供のPython 3.11イメージを使用します。
+    "image": "mcr.microsoft.com/devcontainers/python:3.11-bullseye",
+  
+    // コンテナ作成後に実行するコマンドを指定します。pipを更新し、streamlitをインストールします。
+    "postCreateCommand": "pip install --upgrade pip && pip install streamlit",
+  
+    // Codespaces内で利用可能にするポートを指定します。Streamlitのデフォルトポート8501を開放します。
+    "forwardPorts": [8501],
+  
+    // VS Code固有の設定
+    "customizations": {
+      "vscode": {
+        // Codespaces起動時に自動でインストールするVS Code拡張機能のIDを指定します。
+        "extensions": [
+          "ms-python.python",       // Python言語サポート
+          "ms-python.vscode-pylance" // 高機能なPythonインテリセンス
+        ]
+      }
+    }
+  
+    // ルートユーザーではなく、通常のユーザーとして接続するための設定（通常はこのまま）
+    // "remoteUser": "vscode"
+  }
