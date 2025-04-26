@@ -68,7 +68,7 @@ style: |
 ## 1. (続き) 復習課題 (Streamlit)
 
 - **環境:** **GitHub Codespaces上で**実施します。
-- **ファイル:** `src/lecture03/app_review.py` で以下のいずれか、または複数を試してみよう！
+- **ファイル:** `src/lecture03/app.py` で以下を試してみよう！
 - **目的:** 前回学んだPythonの基本とStreamlitの入出力を組み合わせて使う練習。
 - **課題例:**
     1.  **かんたん計算機:** `st.text_input` で2つの数を入力 -> 和・差・積・商を計算して `st.write` で表示。
@@ -84,16 +84,15 @@ style: |
         `https://github.com/kyouto-yono-ac/web_programming_2025`
     *   緑色の **`Use this template`** ボタンをクリックし、「Open in codespace」を選択。
     *   少し待つと、ブラウザにVS Codeのようなエディタが表示されます。
-
-2.  **Streamlitアプリの実行:**
+2.  **実装:**
+    *   src/lecture03/app.py　を編集します
+3.  **Streamlitアプリの実行:**
     *   Codespacesエディタ下部などの **ターミナル** で以下のコマンドを入力して実行:
       ```bash
       streamlit run src/lecture03/app.py
       ```
     *   実行後、右下に表示されるポップアップの「ブラウザーで開く」ボタンをクリックするか、「ポート」タブに表示されるURLにアクセスしてアプリを確認します。
-
 ---
-
 ## 2. 条件分岐 (if文) (15分)
 
 **特定の条件に応じて処理を変えたい**
