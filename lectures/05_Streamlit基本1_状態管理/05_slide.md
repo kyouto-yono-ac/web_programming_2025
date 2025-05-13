@@ -7,23 +7,23 @@ footer: "第5回：Streamlit基本(1) と状態管理入門"
 size: 16:9
 style: |
   section {
-    font-size: 25px;
+    font-size: 22px;
   }
   h1 {
-    font-size: 32px;
+    font-size: 30px;
   }
   h2 {
-    font-size: 28px;
+    font-size: 26px;
   }
   code {
-    font-size: 18px;
+    font-size: 16px;
   }
   pre code {
-    font-size: 16px;
-    line-height: 1.2;
+    font-size: 14px;
+    line-height: 1.1;
   }
   table {
-    font-size: 20px;
+    font-size: 18px;
   }
 ---
 
@@ -48,14 +48,15 @@ style: |
 
 ## 本日の流れ (90分)
 
-| 時間        | 内容                                                            | 形式          |
-| ----------- | --------------------------------------------------------------- | ------------- |
-| 00:00-00:10 | 前回の復習と本日の課題提示                                      | 講義          |
-| 00:10-00:30 | **Streamlitの状態管理: `st.session_state` 入門**                | 講義 + デモ   |
-| 00:30-00:55 | **演習1: `st.session_state`を使った動的持ち物リスト**         | 演習 (Streamlit)|
-| 00:55-01:10 | **Streamlit基本ウィジェット (表示系)**                          | 講義 + デモ   |
-| 01:10-01:20 | **Python基礎: 関数 (`def`) と辞書 (`dict`) の初歩**             | 講義          |
-| 01:20-01:30 | まとめ、質疑応答、次回予告                                      | 講義          |
+| 時間        | 内容                                                            |
+| ----------- | --------------------------------------------------------------- |
+| 00:00-00:10 | 前回の復習と本日の課題提示                                      |
+| 00:10-00:20 | **Python基礎: 辞書 (`dict`) の初歩**                            |
+| 00:20-00:30 | **Python基礎: 関数 (`def`) の初歩**                             |
+| 00:30-00:50 | **Streamlitの状態管理: `st.session_state` 入門**                |
+| 00:50-01:15 | **演習1: `st.session_state`を使った動的持ち物リスト**         |
+| 01:15-01:25 | **Streamlit基本ウィジェット (表示系)**                          |
+| 01:25-01:30 | まとめ、質疑応答、次回予告                                      |
 
 ---
 
@@ -74,7 +75,146 @@ for item in items:
 
 **課題:** このリストに新しいアイテムを追加できるようにするには？
 
+実際に実装を試してみましょう！
+
 ---
+
+## 通常のリストで試してみる
+
+```python
+import streamlit as st
+
+# 持ち物リスト
+items = ["PC", "充電器", "スマートフォン", "財布"]
+# 新しいアイテムの入力
+new_item = st.text_input("新しいアイテムを入力:")
+# 追加ボタン
+if st.button("追加"):
+    items.append(new_item)  # リストに追加
+
+# リストの表示
+st.subheader("持ち物リスト:")
+for item in items:
+    st.checkbox(item)
+```
+
+**問題点:**
+- ボタンをクリックすると、スクリプトが再実行される
+- 再実行時に`items`が初期化される
+- 追加したアイテムが保持されない→**保持させる仕組みを作る必要がある。**
+---
+
+## Python基礎: 辞書 (`dict`)
+
+### 辞書とは？
+- キー(key)と値(value)のペアでデータを格納するデータ型
+- キーを使って値にアクセスできる
+- 順序は保持されない（Python 3.7以降は保持される）
+
+### 基本的な使い方（作成とアクセス）
+```python
+# 辞書の作成
+person = {
+    "name": "太郎",
+    "age": 20,
+    "city": "東京"
+}
+
+# 値へのアクセス
+print(person["name"])  # 出力: 太郎
+print(person["age"])   # 出力: 20
+```
+---
+## Python基礎: 辞書 (`dict`) の操作
+
+### 値の更新と追加
+```python
+# 値の更新
+person["age"] = 21
+print(person["age"])   # 出力: 21
+
+# 新しいキーと値の追加
+person["job"] = "学生"
+print(person["job"])   # 出力: 学生
+
+# 辞書の内容を確認
+print(person)  # 出力: {'name': '太郎', 'age': 21, 'city': '東京', 'job': '学生'}
+```
+
+### 主な操作
+- 値の取得: `dict[key]`
+- 値の更新: `dict[key] = new_value`
+- 新しいキーと値の追加: `dict[new_key] = new_value`
+- キーの存在確認: `key in dict`
+
+---
+
+## Python基礎: 関数 (`def`)
+
+### 関数とは？
+- 同じ処理をまとめて再利用しやすくする
+- コードの可読性を向上させる
+
+### 基本的な使い方
+```python
+# 関数の定義
+def greet(name):
+    return f"こんにちは、{name}さん！"
+
+# 関数の呼び出し
+message = greet("太郎")
+print(message)  # 出力: こんにちは、太郎さん！
+```
+
+---
+
+## Python基礎: 関数の実践例
+
+### 素数判定
+
+前回のコードでは`for-else`構文を使用していました：
+
+```python
+for num in range(2, 21):
+    for i in range(2, num):
+        if num % i == 0:
+            break  # 内側のループを抜ける
+    else:
+        # breakされずにループが完了した場合に実行
+        print(num, end=" ")
+```
+
+**`for-else`の動作:**
+- `for`ループが`break`で中断されずに最後まで実行された場合
+- `else`ブロックが実行される
+- 今回の関数では`return`を使うことで、同じ動作をより簡潔に表現
+
+---
+### 関数を使った例
+```python
+# 素数判定の関数
+def is_prime(n):
+    # 2未満の数は素数ではない
+    if n < 2:
+        return False
+    
+    # 2からn-1までの数で割り切れるかチェック
+    for i in range(2, n):
+        if n % i == 0:  # 割り切れたら素数ではない
+            return False
+    
+    # 一度も割り切れなかったら素数
+    return True
+```
+
+**動作の流れ:**
+1. 2未満の数は素数ではないので、すぐに`False`を返す
+2. 2からn-1までの数で順番に割り算を試す
+3. 割り切れたら（余りが0なら）素数ではないので`False`を返す
+4. 最後まで割り切れなかったら素数なので`True`を返す
+
+---
+
 
 ## Streamlitの状態管理: `st.session_state` 入門
 
@@ -95,12 +235,19 @@ for item in items:
 - ブラウザを閉じるまで値が保持される
 
 ```python
-# 基本的な使い方
+# 基本的な使い方（2つの書き方）
+# 1. ドット記法
 if 'count' not in st.session_state:
-    st.session_state.count = 0  # 初期化
+    st.session_state.count = 0
+st.session_state.count += 1
 
-st.session_state.count += 1  # 値の更新
-st.write(f"カウント: {st.session_state.count}")  # 値の参照
+# 2. 角括弧記法
+if 'count' not in st.session_state:
+    st.session_state['count'] = 0
+st.session_state['count'] += 1
+
+# どちらの書き方でも同じ結果
+st.write(f"カウント: {st.session_state.count}")  # または st.session_state['count']
 ```
 
 ---
@@ -137,7 +284,6 @@ if st.button('リセット'):
 2.  `st.text_input` で新しいアイテム名を入力
 3.  `st.button` でアイテムをリストに追加
 4.  `for` ループでリストを表示
-5.  (発展) アイテムの削除機能
 
 ---
 
@@ -146,9 +292,8 @@ if st.button('リセット'):
 ```python
 import streamlit as st
 
-# 持ち物リストの初期化
-if 'items' not in st.session_state:
-    st.session_state.items = ["PC", "充電器", "スマートフォン", "財布"]
+# 持ち物リスト
+st.session_state.items = ["PC", "充電器", "スマートフォン", "財布"]
 
 # 新しいアイテムの入力
 new_item = st.text_input("新しいアイテムを入力:")
@@ -214,62 +359,24 @@ if st.button("クリックしてください"):
 
 ---
 
-## Python基礎: 関数 (`def`)
-
-### 関数とは？
-- 同じ処理をまとめて再利用しやすくする
-- コードの可読性を向上させる
-
-### 基本的な使い方
-```python
-# 関数の定義
-def greet(name):
-    return f"こんにちは、{name}さん！"
-
-# 関数の呼び出し
-message = greet("太郎")
-st.write(message)  # 出力: こんにちは、太郎さん！
-```
-
----
-
-## Python基礎: 辞書 (`dict`)
-
-### 辞書とは？
-- キー(key)と値(value)のペアでデータを格納するデータ型
-- `st.session_state` も辞書のように振る舞う
-
-### 基本的な使い方
-```python
-# 辞書の作成
-person = {
-    "name": "太郎",
-    "age": 20,
-    "city": "東京"
-}
-
-# 値へのアクセス
-st.write(person["name"])  # 出力: 太郎
-st.write(person["age"])   # 出力: 20
-```
-
----
-
 ## まとめ
 
-1.  **Streamlitの状態管理:**
+1.  **Python基礎:**
+    - 辞書 (`dict`): キーと値のペアでデータを管理
+    - 関数 (`def`): 処理のまとめ、再利用
+    - `for-else`構文: ループの完了条件に応じた処理
+
+2.  **Streamlitの状態管理:**
     - `st.session_state` でユーザーの操作やデータの変更を保持
     - 辞書型のオブジェクトとして扱う
+    - ドット記法と角括弧記法の両方でアクセス可能
 
-2.  **Streamlit基本ウィジェット:**
+3.  **Streamlit基本ウィジェット:**
     - `st.write()`: 汎用的な表示
     - `st.header()`, `st.subheader()`, `st.caption()`: テキストフォーマット
     - `st.markdown()`: Markdown記法での表示
     - `st.button()`: クリックイベントの処理
-
-3.  **Python基礎:**
-    - 関数 (`def`): 処理のまとめ、再利用
-    - 辞書 (`dict`): キーと値のペアでデータを管理
+    - `st.text_input()`: テキスト入力
 
 ---
 
@@ -285,11 +392,6 @@ st.write(person["age"])   # 出力: 20
 
 より複雑なユーザー入力を受け付ける方法を学びます！
 
----
-
-## 質疑応答
-
-ご質問はありますか？
 
 ---
 
