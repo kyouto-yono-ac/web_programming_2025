@@ -292,8 +292,9 @@ if st.button('リセット'):
 ```python
 import streamlit as st
 
-# 持ち物リスト
-st.session_state.items = ["PC", "充電器", "スマートフォン", "財布"]
+# 持ち物リストの初期化
+if 'items' not in st.session_state:
+    st.session_state.items = ["PC", "充電器", "スマートフォン", "財布"]
 
 # 新しいアイテムの入力
 new_item = st.text_input("新しいアイテムを入力:")
