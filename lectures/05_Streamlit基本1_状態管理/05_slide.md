@@ -409,7 +409,8 @@ new_item = st.text_input("新しいアイテムを入力:")
 
 # 追加ボタン
 if st.button("追加") and new_item:  # new_itemが空でない場合のみ追加
-    st.session_state.items.append(new_item)
+    # 新しいリストを作成して代入
+    st.session_state.items = st.session_state.items + [new_item]
 
 # リストの表示
 st.subheader("持ち物リスト:")

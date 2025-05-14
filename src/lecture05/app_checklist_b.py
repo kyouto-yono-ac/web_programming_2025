@@ -18,7 +18,7 @@ if st.button("追加"):
 
 # リストの表示
 st.subheader("持ち物リスト:")
-for item in st.session_state.items:
+for item in st.session_state["items"]:
     st.checkbox(item)
 
 # ヒント
