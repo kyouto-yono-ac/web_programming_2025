@@ -6,18 +6,10 @@ header: "大妻女子大学 社会情報学部 WebプログラミングI"
 footer: "第7回: Streamlit基本(3): レイアウト、状態管理、ファイル入力"
 size: 16:9
 style: |
-  section {
-    font-size: 28px; /* 基本のフォントサイズ */
-  }
-  h1 {
-    font-size: 60px;
-  }
-  h2 {
-    font-size: 45px;
-  }
-  h3 {
-    font-size: 35px;
-  }
+  section { font-size: 1.4em; } /* 基本のフォントサイズを少し大きく */
+  h1 { font-size: 2.0em; } /* H1も大きく */
+  h2 { font-size: 1.7em; } /* H2も大きく */
+  h3 { font-size: 1.5em; } /* H3も大きく */
   code {
     font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
     font-size: 0.9em;
@@ -32,23 +24,21 @@ style: |
     font-size: 0.8em;
   }
   .lead h1 {
-    font-size: 70px;
+    font-size: 2.8em; /* lead H1も proportionally大きく */
   }
   .lead p {
-    font-size: 32px;
+    font-size: 1.6em; /* lead pも proportionally大きく */
   }
   table {
     font-size: 0.8em;
   }
 ---
 
-<!-- _class: lead -->
 # 第7回 Streamlit基本(3)
 ## レイアウト、状態管理、ファイル入力
-<br>
-<br>
 担当: [担当者名]
-出席認証コード: **2242**
+出席認証コード:**2242**
+
 授業資料: [https://x.gd/NoqkC](https://x.gd/NoqkC) (←実際のURLに置き換えてください)
 
 ---
@@ -340,4 +330,19 @@ if uploaded_file is not None and uploaded_file.type == "text/plain":
 - GitHubアカウント
 - これまでの復習
 
-お疲れ様でした！ 
+お疲れ様でした！
+
+---
+
+## アプリのデプロイ
+
+Streamlit Community Cloud を利用してアプリを公開する手順を確認します。
+
+- GitHub の public レポジトリーの作成
+- アプリファイルの追加とコミット（GitHub GUI または Git）
+- Streamlit Community Cloud への登録
+- GitHub リポジトリーを指定してアプリをデプロイ
+
+[参考資料](https://docs.google.com/document/d/1jCVlQHL6o425FxVXUZdZk-LgYa5wydISlqu52cbkbyk/edit?tab=t.0)
+
+--- 
