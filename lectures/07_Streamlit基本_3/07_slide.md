@@ -36,8 +36,7 @@ style: |
 
 # 第7回 Streamlit基本(3)
 ## レイアウト、状態管理、ファイル入力
-担当: [担当者名]
-出席認証コード:**2242**
+出席認証コード: **2242**
 
 授業資料: [https://x.gd/NoqkC](https://x.gd/NoqkC) (←実際のURLに置き換えてください)
 
@@ -48,7 +47,6 @@ style: |
 1.  **レイアウト機能**: `st.columns`, `st.expander`, `st.sidebar` を理解し、使いこなせるようになる。
 2.  **状態管理**: `st.session_state` の概念と使い方を習得する。
 3.  **フォーム機能**: `st.form`, `st.form_submit_button` を理解し、複数の入力をまとめて扱えるようになる。
-4.  **ファイルアップロード**: `st.file_uploader` を用いて、ユーザーがファイルをアップロードし、その情報を表示できるようになる。
 
 ---
 
@@ -60,9 +58,9 @@ style: |
 | 00:05 - 00:25 | レイアウト機能                           |
 | 00:25 - 00:45 | 状態管理 (`st.session_state`)             |
 | 00:45 - 01:05 | フォーム (`st.form`)                      |
-| 01:05 - 01:20 | ファイルアップロード (`st.file_uploader`)    |
+| 01:05 - 01:20 | 演習課題と実践                           |
 | 01:20 - 01:25 | 質疑応答と次回予告                       |
-| 01:25 - 01:30 | まとめと演習課題の提示                   |
+| 01:25 - 01:30 | まとめ                                   |
 
 ---
 
@@ -109,7 +107,7 @@ with col3:
    st.header("Owl")
    st.image("https://static.streamlit.io/examples/owl.jpg")
 
-# (演習: src/lecture07/app_lecture.py の該当箇所に各自追記)
+
 ```
 ---
 ## 1. レイアウト機能 (3) - `st.expander`
@@ -127,7 +125,7 @@ with st.expander("詳細を見る"):
          このグラフは架空のデータを表示しています。
          詳細な分析やデータの背景については、提供元にお問い合わせください。
      \'\'\')
-# (演習: src/lecture07/app_lecture.py の該当箇所に各自追記)
+
 ```
 ---
 ## レイアウト機能 演習
@@ -159,28 +157,6 @@ if increment:
     st.session_state.count += 1
 
 st.write("カウント: ", st.session_state.count)
-# (演習: src/lecture07/app_lecture.py の該当箇所に各自追記)
-```
----
-## 2. 状態管理 `st.session_state` (2) - 初期化とコールバック
-
-- **初期化のタイミング**:
-    - 通常、キーが存在しない場合に初期値を代入。
-- **コールバック関数**:
-    - ウィジェットの `on_change` 引数に関数を指定すると、ウィジェットの値が変更されたときにその関数が実行される。
-    - コールバック関数内で `st.session_state` を更新することで、より複雑な状態管理が可能。
-
-```python
-import streamlit as st
-
-def count_up():
-    st.session_state.counter += 1
-
-if \'counter\' not in st.session_state:
-    st.session_state.counter = 0
-
-st.button("コールバックでカウントアップ", on_change=count_up)
-st.write("カウンター:", st.session_state.counter)
 # (演習: src/lecture07/app_lecture.py の該当箇所に各自追記)
 ```
 ---
@@ -241,59 +217,6 @@ with st.form("user_form"):
     3. 送信ボタンが押されたら、入力された全情報をまとめて表示する。
 
 ---
-## 4. ファイルアップロード `st.file_uploader` (1)
-
-- ユーザーがローカルからファイルをアップロードできるようにするウィジェット。
-- `st.file_uploader("ラベル", type=["拡張子1", "拡張子2"])`
-    - `type` で許可するファイル形式を指定可能 (例: `type=["csv", "txt"]`, `type="png"` )。
-- アップロードされたファイルは `UploadedFile` オブジェクトとして返される。
-    - `None` (ファイル未選択時) または `UploadedFile` インスタンス。
-
-```python
-import streamlit as st
-
-uploaded_file = st.file_uploader("ファイルを選択してください (PNG or JPG)", type=["png", "jpg"])
-
-if uploaded_file is not None:
-    # ファイル詳細の表示
-    st.write("ファイル名:", uploaded_file.name)
-    st.write("ファイルタイプ:", uploaded_file.type)
-    st.write("ファイルサイズ:", uploaded_file.size, "bytes")
-    
-    # 画像ファイルなら表示
-    if uploaded_file.type.startswith("image/"):
-        st.image(uploaded_file, caption=\'アップロードされた画像\', use_column_width=True)
-# (演習: src/lecture07/app_lecture.py の該当箇所に各自追記)
-```
----
-## 4. ファイルアップロード `st.file_uploader` (2) - `UploadedFile` オブジェクト
-
-`UploadedFile` オブジェクトから取得できる主な情報:
-- `name`: アップロードされたファイルの名前 (例: `my_image.png`)
-- `type`: ファイルのMIMEタイプ (例: `image/png`)
-- `size`: ファイルサイズ (バイト単位)
-- `read()`: ファイルの内容をバイト列として読み込む
-- `getvalue()`: `read()` と同様 (BytesIOの場合)
-
-```python
-# (前スライドのコードの続き)
-# テキストファイルの場合、内容を表示
-if uploaded_file is not None and uploaded_file.type == "text/plain":
-    # バイト列を文字列にデコード
-    string_data = uploaded_file.read().decode("utf-8") # または適切なエンコーディング
-    st.text_area("ファイル内容", string_data, height=200)
-```
----
-## `st.file_uploader` 演習
-
-- **目標**: `st.file_uploader` を使ってファイルをアップロードし、その情報を表示するアプリを作成する。
-- **演習ファイル**: `src/lecture07/app_lecture.py` の「ファイルアップロード (`st.file_uploader`) 演習セクション」を編集
-- **課題例**:
-    1. CSVファイルをアップロードできるようにする (`type=["csv"]`)。
-    2. アップロードされたら、ファイル名、ファイルタイプ、ファイルサイズを表示する。
-    3. (発展) アップロードされたCSVファイルの内容をPandas DataFrameとして読み込み、最初の5行を `st.dataframe` で表示する。(Pandasの知識が必要になります。ヒント: `pd.read_csv(uploaded_file)`)
-
----
 
 ## まとめ
 
@@ -305,8 +228,6 @@ if uploaded_file is not None and uploaded_file.type == "text/plain":
     - `st.session_state`: インタラクション間でデータを保持
 - **フォーム**:
     - `st.form` & `st.form_submit_button`: 複数入力をまとめて送信
-- **ファイルアップロード**:
-    - `st.file_uploader`: ローカルファイルをアプリにアップロード
 
 これらの機能を組み合わせることで、より複雑でインタラクティブなWebアプリが作成できます！
 
@@ -324,7 +245,7 @@ if uploaded_file is not None and uploaded_file.type == "text/plain":
 
 - これまでの知識を活用した総合的なStreamlitアプリ作成演習
 - 作成したアプリをGitHubへアップロードする方法
-- 補足: `st.image`, `st.video` の使い方
+- 補足: `st.image`, `st.video`, `st.file_uploader` の使い方
 
 **準備しておくこと:**
 - GitHubアカウント
@@ -345,4 +266,4 @@ Streamlit Community Cloud を利用してアプリを公開する手順を確認
 
 [参考資料](https://docs.google.com/document/d/1jCVlQHL6o425FxVXUZdZk-LgYa5wydISlqu52cbkbyk/edit?tab=t.0)
 
---- 
+---
