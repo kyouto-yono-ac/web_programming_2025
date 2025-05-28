@@ -68,7 +68,6 @@
 - `src/lecture07/app_lecture_a.py`
 
 ## 7. 次回予告
-- **第8回: 課題演習 (1) と GitHub**
+- **第8回: 課題演習 (1)**
     - これまでの知識を活用した総合的なStreamlitアプリ作成演習
     - 作成したアプリをGitHubへアップロードする方法
-    - 補足: `st.image`, `st.video` の使い方 

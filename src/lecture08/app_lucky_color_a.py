@@ -1,9 +1,11 @@
 import streamlit as st
-import random
 
-# アプリのタイトル
-st.title("今日のラッキーカラー診断アプリ")
-st.write("あなたの今日のラッキーカラーを占います！")
+st.title("第8回 演習: ラッキーカラー診断アプリ - 解答例")
+st.caption("星座や好きな数字を選んで、今日のラッキーカラーを診断しましょう。")
+
+st.markdown("---")
+st.subheader("演習: ラッキーカラー診断")
+st.write("**課題**: 星座や好きな数字を選ぶと、今日のラッキーカラーとアドバイスを表示するアプリを作成する。")
 
 # 星座のリスト
 constellations = [
@@ -12,7 +14,7 @@ constellations = [
     "いて座", "やぎ座", "みずがめ座", "うお座"
 ]
 
-# ラッキーカラー、アドバイス、画像パスの辞書 (キーは星座)
+# ラッキーカラー、アドバイス、画像パスの辞書
 results_data = {
     "おひつじ座": {"color": "レッド", "advice": "情熱的に行動すると良い日！", "image": "images/lucky_color/red.png"},
     "おうし座": {"color": "グリーン", "advice": "堅実さが幸運を呼ぶでしょう。", "image": "images/lucky_color/green.png"},
@@ -29,7 +31,6 @@ results_data = {
 }
 
 # ユーザー入力
-st.subheader("あなたの情報を教えてください")
 selected_constellation = st.selectbox("あなたの星座を選んでください", constellations)
 
 # 診断実行ボタン
@@ -42,14 +43,23 @@ if st.button("今日のラッキーカラーを診断する！"):
 
         st.subheader(f"{selected_constellation}のあなたの今日のラッキーカラーは「{lucky_color}」です！")
         
-        # 色を背景にしたスタイリングで表示
+        # 色を背景にした表示
+        color_map = {
+            "ホワイト": "#FFFFFF", "シルバー": "#C0C0C0", "ゴールド": "#FFD700", "アクア": "#00FFFF",
+            "レッド": "red", "グリーン": "green", "イエロー": "yellow", "ピンク": "pink",
+            "パープル": "purple", "ブルー": "blue", "ブラウン": "brown", "ネイビー": "navy"
+        }
+        
+        bg_color = color_map.get(lucky_color, lucky_color.lower())
+        text_color = "black" if lucky_color in ["イエロー", "ホワイト", "ピンク", "ゴールド", "アクア", "シルバー"] else "white"
+        
         st.markdown(f"""
         <div style="
             text-align: center;
             padding: 20px;
             border-radius: 10px;
-            background-color: {lucky_color.lower() if lucky_color not in ["ホワイト", "シルバー", "ゴールド", "アクア"] else ('#FFFFFF' if lucky_color == "ホワイト" else ('#C0C0C0' if lucky_color == "シルバー" else ('#FFD700' if lucky_color == "ゴールド" else '#00FFFF')) )}; 
-            color: {'black' if lucky_color in ["イエロー", "ホワイト", "ピンク", "ゴールド", "アクア", "シルバー"] else 'white'};
+            background-color: {bg_color}; 
+            color: {text_color};
             font-size: 24px;
             font-weight: bold;
             margin-bottom: 15px;
@@ -61,23 +71,17 @@ if st.button("今日のラッキーカラーを診断する！"):
         st.write("**ラッキーアドバイス:**")
         st.info(advice_message)
 
-        st.write("**ラッキーイメージ:**")
-        # 画像表示 (画像ファイルは src/lecture08/images/lucky_color/ に配置想定)
-        # 実際の授業では、これらの画像ファイルを事前に用意・配布する必要があります。
+        # 画像表示
         try:
-            # 注意: このパスはStreamlit実行時のカレントディレクトリからの相対パスです。
-            # `src`ディレクトリ内で実行する場合を想定しています。
-            # もしプロジェクトルートから `streamlit run src/lecture08/app_lucky_color_a.py` のように実行する場合は
-            # パスを `image_path` のままにするか、適宜調整してください。
-            full_image_path = image_path # ここでは src/lecture08/ がカレントの前提
-            st.image(full_image_path, caption=f"{lucky_color}のイメージ", width=250)
+            st.image(image_path, caption=f"{lucky_color}のイメージ", width=250)
         except FileNotFoundError:
-            st.warning(f"画像ファイル ({full_image_path}) が見つかりません。ダミー画像を表示します。")
+            st.warning(f"画像ファイル ({image_path}) が見つかりません。ダミー画像を表示します。")
             st.image("https://via.placeholder.com/250x250/CCCCCC/FFFFFF?Text=Image+Not+Found", caption="画像準備中")
         except Exception as e:
             st.error(f"画像表示中にエラーが発生しました: {e}")
-    else:
-        st.error("有効な星座が選択されていません。")
+
+st.markdown("---")
+st.success("✅ ラッキーカラー診断アプリの解答例です。星座と結果の対応表を辞書で管理することで、簡潔に実装できます。")
 
 st.sidebar.header("このアプリについて")
 st.sidebar.success(

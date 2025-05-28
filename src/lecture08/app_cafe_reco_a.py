@@ -1,94 +1,73 @@
 import streamlit as st
 
-# アプリのタイトル
-st.title("おすすめカフェ/ランチ スタイル診断")
-st.write("いくつかの質問に答えて、あなたにピッタリのカフェやランチのスタイルを見つけましょう！")
+st.title("第8回 演習: カフェ/ランチ診断アプリ - 解答例")
+st.caption("気分・予算・同行者を選んで、おすすめのカフェスタイルを診断しましょう。")
 
-# 質問項目
-st.subheader("あなたの好みや気分を教えてください")
+st.markdown("---")
+st.subheader("演習: カフェ/ランチ診断")
+st.write("**課題**: 気分・予算・同行者を選ぶと、おすすめのカフェスタイルを診断するアプリを作成する。")
 
-# 1. 今日の気分は？
-mood_options = {
-    "しっかり食べたい": "しっかり",
-    "軽めに済ませたい": "軽め",
-    "おしゃれな雰囲気を楽しみたい": "おしゃれ",
-    "静かに過ごしたい": "静か"
-}
-selected_mood_display = st.radio(
-    "Q1. 今日の気分は？",
-    list(mood_options.keys())
-)
-selected_mood = mood_options[selected_mood_display]
+# ユーザー入力
+mood_options = ["がっつり食べたい", "ヘルシー志向", "おしゃれな空間で過ごしたい", "静かに集中したい"]
+selected_mood = st.radio("今の気分は？", mood_options)
 
-# 2. 予算は？
-budget_options = {
-    "〜1000円": "リーズナブル", 
-    "1000円〜1800円": "標準", 
-    "1800円〜": "贅沢"
-}
-selected_budget_display = st.selectbox(
-    "Q2. ランチの予算はどれくらい？",
-    list(budget_options.keys())
-)
-selected_budget = budget_options[selected_budget_display]
+budget = st.slider("ランチの予算は？ (円)", min_value=500, max_value=3000, step=100, value=1000)
 
-# 3. 誰と行きますか？
-companion_options = {
-    "ひとりで": "ひとり",
-    "友達や同僚と (2〜4人)": "少人数",
-    "大人数で (5人以上)": "大人数"
-}
-selected_companion_display = st.radio(
-    "Q3. 誰と行きますか？",
-    list(companion_options.keys())
-)
-selected_companion = companion_options[selected_companion_display]
-
-
-# 診断結果のデータ (ここに診断ロジックと結果を定義)
-# キーは (気分, 予算, 同行者) のタプル
-recommendations = {
-    # しっかり x リーズナブル
-    ("しっかり", "リーズナブル", "ひとり"): {"title": "定食屋でがっつり一人飯", "desc": "コスパ抜群の定食屋で、栄養満点のがっつりランチをどうぞ。午後の活力になります！", "img": "images/cafe_reco/teishoku_hitori.png"},
-    ("しっかり", "リーズナブル", "少人数"): {"title": "仲間とわいわい大衆食堂", "desc": "友達や同僚と、安くて美味しい大衆食堂へ！豊富なメニューから好きなものを選んで楽しもう。", "img": "images/cafe_reco/taishu_shokudo.png"},
-    ("しっかり", "リーズナブル", "大人数"): {"title": "食べ放題でみんな満足！", "desc": "大人数ならやっぱり食べ放題！お財布に優しく、みんなでお腹いっぱいになれます。", "img": "images/cafe_reco/tabehoudai_reasonable.png"},
-    # しっかり x 標準
-    ("しっかり", "標準", "ひとり"): {"title": "話題のラーメン店で一杯", "desc": "ちょっと贅沢に、行列のできるラーメン店や専門店の味を堪能。自分へのご褒美に。", "img": "images/cafe_reco/ramen_hitori.png"},
-    ("しっかり", "標準", "少人数"): {"title": "人気の洋食屋さんでランチセット", "desc": "ハンバーグやオムライスなど、みんな大好きな洋食屋さんのランチセットで、会話も弾みます。", "img": "images/cafe_reco/yoshoku_friends.png"},
-    ("しっかり", "標準", "大人数"): {"title": "多国籍料理ビュッフェ", "desc": "色々な国の料理が楽しめるビュッフェなら、大人数でもそれぞれの好みに合わせられます。", "img": "images/cafe_reco/buffet_standard.png"},
-    # おしゃれ x 標準 (一例)
-    ("おしゃれ", "標準", "ひとり"): {"title": "ブックカフェで読書ランチ", "desc": "おしゃれなブックカフェで、美味しいコーヒーと共に静かな読書時間を。軽食も楽しめます。", "img": "images/cafe_reco/book_cafe.png"},
-    ("おしゃれ", "標準", "少人数"): {"title": "テラス席のあるカフェレストラン", "desc": "開放的なテラス席で、おしゃれなランチプレートを囲んで、友人との会話を楽しんで。", "img": "images/cafe_reco/terrace_cafe.png"},
-    # ... 他の組み合わせも追加 (以下はデフォルト的なもの)
-}
-
-default_recommendation = {"title": "あなたにぴったりのスタイルを探索中...", "desc": "もう少し条件を変えて試してみてね！", "img": "images/cafe_reco/default.png"}
+companion_options = ["一人で", "友達と", "家族と", "デート"]
+selected_companion = st.selectbox("誰と行きますか？", companion_options)
 
 # 診断実行ボタン
 if st.button("おすすめスタイルを診断する！"):
-    st.header("診断結果")
-    # 選択された条件に一致する結果を探す
-    result_key = (selected_mood, selected_budget, selected_companion)
-    recommendation = recommendations.get(result_key, default_recommendation)
+    # 診断ロジック
+    if selected_mood == "がっつり食べたい":
+        if budget < 1000:
+            title = "コスパ最強！満腹ランチスタイル"
+            description = "お手頃価格でお腹いっぱいになれる、ボリューム満点のランチがおすすめです。"
+            image_path = "images/cafe_reco/gutsuri_cheap.png"
+        elif budget < 1500:
+            title = "大満足！がっつり贅沢ランチ"
+            description = "ちょっと奮発して、お肉料理や話題の丼ものなど、食べ応えのあるランチを楽しみましょう。"
+            image_path = "images/cafe_reco/gutsuri_mid.png"
+        else:
+            title = "超豪華！自分にご褒美がっつり飯"
+            description = "特別な日や自分へのご褒美に、高級焼肉やステーキなど、普段は食べられないような豪華ながっつり飯はいかがですか。"
+            image_path = "images/cafe_reco/gutsuri_expensive.png"
+    elif selected_mood == "ヘルシー志向":
+        title = "からだ想いのヘルシーランチスタイル"
+        description = "野菜たっぷりのサラダランチや、バランスの取れた定食がおすすめです。"
+        image_path = "images/cafe_reco/healthy.png"
+    elif selected_mood == "おしゃれな空間で過ごしたい":
+        title = "インスタ映え♪おしゃれカフェスタイル"
+        description = "トレンドのカフェで、おしゃれな料理と空間を楽しみましょう。SNSでシェアしたくなる素敵な時間を。"
+        image_path = "images/cafe_reco/stylish.png"
+    else:  # 静かに集中したい
+        title = "隠れ家風カフェでのんびり集中タイム"
+        description = "落ち着いた雰囲気のカフェで、読書や作業に集中できる環境がおすすめです。"
+        image_path = "images/cafe_reco/quiet.png"
 
-    st.subheader(recommendation["title"])
+    # 結果表示
+    st.subheader(f"🎯 {title}")
+    st.write(description)
     
-    # 画像表示 (画像ファイルは src/lecture08/images/cafe_reco/ に配置想定)
+    # 同行者に応じた追加コメント
+    if selected_companion == "友達と":
+        st.info("👥 友達とのランチなら、シェアできるメニューがあるお店もおすすめです！")
+    elif selected_companion == "デート":
+        st.info("💕 デートなら、雰囲気の良い個室やテラス席のあるお店を選んでみてはいかがでしょう。")
+    elif selected_companion == "一人で":
+        st.info("🧘‍♀️ 一人時間を大切に。カウンター席のあるお店もゆっくりできて良いですね。")
+
+    # 画像表示
     try:
-        # プロジェクトルートから streamlit run src/lecture08/app_cafe_reco_a.py で実行する場合を考慮
-        # (演習テンプレートと同じパス構造を想定)
-        full_image_path = recommendation["img"]
-        st.image(full_image_path, caption=recommendation["title"], use_column_width=True)
+        st.image(image_path, caption=title, width=300)
     except FileNotFoundError:
-        st.warning(f"画像ファイル ({full_image_path}) が見つかりません。ダミー画像を表示します。")
-        st.image("https://via.placeholder.com/400x250/CCCCCC/FFFFFF?Text=Image+Not+Found", caption="画像準備中")
+        st.warning(f"画像ファイル ({image_path}) が見つかりません。ダミー画像を表示します。")
+        st.image("https://via.placeholder.com/300x200/CCCCCC/FFFFFF?Text=Image+Not+Found", caption="画像準備中")
     except Exception as e:
         st.error(f"画像表示中にエラーが発生しました: {e}")
 
-    st.info(recommendation["desc"])
-    
-    if recommendation == default_recommendation and result_key not in recommendations:
-        st.caption(f"(デバッグ情報: 検索キー {result_key} は定義されていませんでした)")
+st.markdown("---")
+st.success("✅ カフェ/ランチ診断アプリの解答例です。複数の入力を組み合わせて結果を分岐させています。")
 
 st.sidebar.header("このアプリについて")
 st.sidebar.success(

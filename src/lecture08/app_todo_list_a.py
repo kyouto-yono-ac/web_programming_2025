@@ -1,102 +1,84 @@
 import streamlit as st
 
-# アプリのタイトル
-st.title("シンプルなToDoリスト (解答例)")
-st.write("やるべきことをリストにして管理しましょう。")
+st.title("第8回 演習: ToDoリストアプリ - 解答例")
+st.caption("タスクの追加・完了チェック・削除ができるシンプルなToDoリストを作成しましょう。")
 
-# ---------------------------------------------------------------------------
-# ToDoリストと入力値をst.session_stateで管理
-# ---------------------------------------------------------------------------
+st.markdown("---")
+st.subheader("演習: ToDoリスト")
+st.write("**課題**: タスクの追加・完了チェック・削除ができるシンプルなToDoリストを作成する。")
+
+# ToDoリストの初期化
 if "todo_list" not in st.session_state:
-    st.session_state.todo_list = [
-        {"task": "Streamlitの基本を復習する", "done": True, "id": "task_0"},
-        {"task": "新しい演習テーマに挑戦する", "done": False, "id": "task_1"},
-        {"task": "GitHubにコードをプッシュする", "done": False, "id": "task_2"}
-    ] # タスクIDも追加して管理しやすくする
+    st.session_state.todo_list = []
 
-if "new_task_input" not in st.session_state:
-    st.session_state.new_task_input = ""
+# タスク追加機能
+st.subheader("新しいタスクを追加")
+new_task = st.text_input("タスクを入力してください", placeholder="例: レポートを書く")
 
-# ---------------------------------------------------------------------------
-# コールバック関数
-# ---------------------------------------------------------------------------
-def add_todo_item():
-    """新しいタスクをリストに追加するコールバック関数"""
-    task_name = st.session_state.new_task_input
-    if task_name: # 入力があれば
-        # ユニークなIDを生成 (ここでは単純な連番とするが、より堅牢な方法も検討可)
-        new_id = f"task_{len(st.session_state.todo_list)}"
-        st.session_state.todo_list.append({"task": task_name, "done": False, "id": new_id})
-        st.session_state.new_task_input = "" # 入力フィールドをクリア
+if st.button("タスクを追加"):
+    if new_task:
+        st.session_state.todo_list.append({"task": new_task, "done": False})
+        st.success(f"「{new_task}」を追加しました！")
+        st.rerun()
+    else:
+        st.error("タスクを入力してください")
 
-def toggle_task_done(task_id):
-    """指定されたIDのタスクの完了状態を切り替える"""
-    for item in st.session_state.todo_list:
-        if item["id"] == task_id:
-            item["done"] = not item["done"]
-            break
-    # st.experimental_rerun() # 状態変更を即時反映 (今回はボタンでのみ操作するため不要な場合も)
+# ToDoリスト表示
+st.subheader("📝 ToDoリスト")
 
-def delete_task_item(task_id):
-    """指定されたIDのタスクを削除する"""
-    st.session_state.todo_list = [item for item in st.session_state.todo_list if item["id"] != task_id]
-    # st.experimental_rerun() # 即時反映
-
-# ---------------------------------------------------------------------------
-# UI要素の配置
-# ---------------------------------------------------------------------------
-
-# タスク入力と追加ボタン (st.formを使うとEnterキーでも追加しやすくなる)
-with st.form(key="add_task_form", clear_on_submit=True):
-    st.text_input(
-        "新しいタスクを入力してください", 
-        key="new_task_input", 
-        placeholder="例: 牛乳を買う"
-    )
-    submit_button = st.form_submit_button(label="タスクを追加", on_click=add_todo_item) # on_clickでコールバック指定
-
-st.divider() # 区切り線
-
-# ToDoリストの表示
-st.subheader("現在のToDoリスト")
 if not st.session_state.todo_list:
-    st.info("タスクはまだありません。新しいタスクを追加しましょう！")
+    st.info("まだタスクがありません。新しいタスクを追加してみましょう！")
 else:
-    # 未完了タスクと完了タスクを分けて表示することもできる
-    # pending_tasks = [item for item in st.session_state.todo_list if not item["done"]]
-    # done_tasks = [item for item in st.session_state.todo_list if item["done"]]
-
-    for item in st.session_state.todo_list:
-        task_id = item["id"]
-        task_description = item["task"]
-        is_done = item["done"]
-
-        col1, col2, col3 = st.columns([0.08, 0.72, 0.2]) # レイアウト調整用
-
-        with col1:
-            # 完了チェックボックス
-            st.checkbox(
-                label="", # ラベルは空にしてタスク名と別に表示
-                value=is_done, 
-                key=f"done_cb_{task_id}", 
-                on_change=toggle_task_done, 
-                args=(task_id,)
-            )
-        with col2:
-            if is_done:
-                st.markdown(f"<span style='text-decoration: line-through; color: grey;'>{task_description}</span>", unsafe_allow_html=True)
-            else:
-                st.markdown(task_description)
+    # 完了・未完了の統計
+    total_tasks = len(st.session_state.todo_list)
+    completed_tasks = sum(1 for item in st.session_state.todo_list if item["done"])
+    
+    st.write(f"**タスク数**: {total_tasks} 件 | **完了**: {completed_tasks} 件 | **残り**: {total_tasks - completed_tasks} 件")
+    
+    # 各タスクの表示
+    for i, item in enumerate(st.session_state.todo_list):
+        col1, col2 = st.columns([4, 1])
         
-        with col3:
-            # 削除ボタン
-            st.button(
-                "削除", 
-                key=f"delete_btn_{task_id}", 
-                on_click=delete_task_item, 
-                args=(task_id,)
+        with col1:
+            # チェックボックスで完了状態を管理
+            is_done = st.checkbox(
+                item["task"], 
+                value=item["done"], 
+                key=f"checkbox_{i}"
             )
-    st.caption(f"合計タスク数: {len(st.session_state.todo_list)}")
+            
+            # 完了状態が変更された場合
+            if is_done != item["done"]:
+                st.session_state.todo_list[i]["done"] = is_done
+                st.rerun()
+        
+        with col2:
+            # 削除ボタン
+            if st.button("🗑️ 削除", key=f"delete_{i}"):
+                st.session_state.todo_list.pop(i)
+                st.success("タスクを削除しました")
+                st.rerun()
+
+# 一括操作
+if st.session_state.todo_list:
+    st.markdown("---")
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        if st.button("全て完了にする"):
+            for item in st.session_state.todo_list:
+                item["done"] = True
+            st.success("全てのタスクを完了にしました！")
+            st.rerun()
+    
+    with col2:
+        if st.button("完了済みタスクを削除"):
+            st.session_state.todo_list = [item for item in st.session_state.todo_list if not item["done"]]
+            st.success("完了済みタスクを削除しました")
+            st.rerun()
+
+st.markdown("---")
+st.success("✅ ToDoリストアプリの解答例です。st.session_stateでデータを管理し、ユニークなkeyでウィジェットを識別しています。")
 
 # デバッグ用: session_stateの中身を表示 (開発中のみ)
 # st.sidebar.subheader("デバッグ情報")
